@@ -14,21 +14,9 @@ RUN set -x \
   && terraform apply -auto-approve \
   && cat outputs/* > ca-cert.pem
 
-# https://github.com/benbjohnson/litestream/blob/main/Dockerfile
-FROM golang:1.23 as BUILD
-
-ARG VERSION=main
-RUN set -x \
-  \
-  && git clone --depth=1 -b $VERSION https://github.com/benbjohnson/litestream.git \
-  && cd litestream \
-  && go build -ldflags "-s -w -X 'main.Version=${VERSION}' -extldflags '-static'" \
-    -tags osusergo,netgo,sqlite_omit_load_extension \
-    -o /usr/local/bin/litestream ./cmd/litestream
-
-FROM alpine:latest
+ARG VERSION
+FROM docker.io/litestream/litestream:$VERSION
 COPY --from=CA ca-cert.pem /usr/local/share/ca-certificates/
-COPY --from=BUILD /usr/local/bin/litestream /usr/local/bin/litestream
 
 RUN set -x \
   \

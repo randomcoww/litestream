@@ -5,8 +5,6 @@
 name: Image Build
 on:
   workflow_dispatch:
-  schedule:
-  - cron: "0 23 1 * *"
   push:
     paths-ignore:
     - .github/**
@@ -28,6 +26,7 @@ jobs:
     steps:
     - name: Set tag
       run: |
+        echo VERSION=$(wget -O - https://api.github.com/repos/benbjohnson/litestream/releases/latest |grep tag_name | cut -d '"' -f 4 | tr -d 'v') | tee -a "$GITHUB_ENV"
         echo TAG=$(date -u +'%Y%m%d.%H%M') | tee -a "$GITHUB_ENV"
 
     - name: Build and release container
@@ -45,7 +44,7 @@ jobs:
         /kaniko/executor \
           --dockerfile="./Containerfile" \
           --context="${{ github.repositoryUrl }}#${{ github.ref }}#${{ github.sha }}" \
-          --destination="ghcr.io/${{ github.repository }}:v$TAG" \
+          --destination="ghcr.io/${{ github.repository }}:v$VERSION.$TAG" \
           --build-arg AWS_ENDPOINT_URL_S3=$AWS_ENDPOINT_URL_S3 \
           --build-arg AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \
           --build-arg AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \
