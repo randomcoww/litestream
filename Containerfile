@@ -22,7 +22,6 @@ RUN set -x \
   \
   && apk add --no-cache \
     ca-certificates \
-    sqlite \
   \
   && update-ca-certificates
 
