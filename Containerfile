@@ -1,4 +1,4 @@
-FROM hashicorp/terraform:latest as CA
+FROM hashicorp/terraform:latest as certs
 COPY trusted_ca.tf .
 
 ARG AWS_ENDPOINT_URL_S3
@@ -16,7 +16,7 @@ RUN set -x \
 
 ARG VERSION
 FROM docker.io/litestream/litestream:$VERSION
-COPY --from=CA ca-cert.pem /usr/local/share/ca-certificates/
+COPY --from=certs ca-cert.pem /usr/local/share/ca-certificates/
 
 RUN set -x \
   \
