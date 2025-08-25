@@ -1,7 +1,7 @@
 ARG VERSION
 FROM docker.io/litestream/litestream:$VERSION
 
-ARG TRUSTED_CA
+ARG INTERNAL_CA_CERT
 
 RUN set -x \
   \
@@ -9,7 +9,7 @@ RUN set -x \
     ca-certificates \
   \
   && mkdir -p /usr/local/share/ca-certificates \
-  && echo -e "$TRUSTED_CA" > /usr/local/share/ca-certificates/ca-cert.pem \
+  && echo -e "$INTERNAL_CA_CERT" > /usr/local/share/ca-certificates/ca-cert.pem \
   && update-ca-certificates
 
 ENTRYPOINT ["litestream"]
