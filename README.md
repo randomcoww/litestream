@@ -1,4 +1,4 @@
-### Container for Litestream
+### Container for Litestream with internal CA
 
 https://github.com/benbjohnson/litestream
 
